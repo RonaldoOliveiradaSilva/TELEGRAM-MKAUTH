@@ -1,34 +1,32 @@
 #!/bin/bash
 
-# altere abaixo o token e id
+# Altere abaixo o token e id do bot do telegram e o caminho do diretório onde estão os arquivos de backup
 
-# token do bot do telegram
 Token="000000000:0000000000000-0000000000000000000000000000000"
-
-# ID do grupo ou usuário do telegram
 ChatID="-1234567890123"
+DirArqBkp="/opt/mk-auth/bckp/"
 
 
 
-# não alterar mais nada abaixo
-# exceto por sua conta e risco
+# Não alterar mais nada abaixo 
+# Exceto por sua conta e risco
 
-# último arquivo de backup
-ArqBkp=$(ls -t /opt/mk-auth/bckp/ | head -1)
-
-# patch/caminho/diretório e arquivo de backup
-DirArqBkp="/opt/mk-auth/bckp/$ArqBkp"
-
-# captura data do envio backup
+# Captura data do envio do backup
 Data=$(date +%d/%m/%Y)
 
-# mensagem de notificação
-Notifica="Mk-Auth Backup do dia $Data"
+# Mensagem de notificação
+Notifica="Mk-Auth - Backup do dia $Data"
 
-# se o arquivo existe
-if [ -a $DirArqBkp ]
-then
-# envie para o telegram
-    curl -F document=@"${DirArqBkp}" -F caption="$Notifica" "https://api.telegram.org/bot${Token}/sendDocument?chat_id=$ChatID" &>/dev/null
+# Verifica se o diretório existe
+if [ -d "$DirArqBkp" ]; then
+
+# Seleciona o último arquivo de backup criado
+ArqBkp=$(ls -t "$DirArqBkp" | head -1)
+
+# Verifica se o arquivo existe
+if [ -a "$DirArqBkp/$ArqBkp" ]; then
+# Envia para o telegram
+curl -F document=@"${DirArqBkp}/${ArqBkp}" -F caption="$Notifica" "https://api.telegram.org/bot${Token}/sendDocument?chat_id=$ChatID" &>/dev/null
+fi
 fi
 exit 0
